@@ -39,9 +39,9 @@ class Recorder():
             print(flush=True)
         if self.log:
             if x is not None:
-                print(x, file=self.f)
+                print(x, file=self.f, flush=True)
             else:
-                print(file=self.f)
+                print(file=self.f, flush=True)
 
     def plot(self, tag, values, step):
         if self.log:
@@ -56,3 +56,5 @@ class Recorder():
     def save(self, model, name):
         if self.log:
             torch.save(model.state_dict(), os.path.join(self.dir, name))
+
+

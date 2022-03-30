@@ -1,9 +1,6 @@
 import torch
 from torch import nn
-from torch.nn import init
 import torch.nn.functional as F
-import math
-from transformers import BertModel, RobertaModel
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 from modeling_bart import BartScorer
 from modeling_pegasus import PegasusScorer
@@ -38,46 +35,11 @@ def RankingLoss(score, summary_score=None, margin=0, gold_margin=0, gold_weight=
     return TotalLoss
 
 
-class BartReRanker(nn.Module):
-    
-    def __init__(self, mname, pad_token_id):
-        super(BartReRanker, self).__init__()
-        self.model = BartScorer.from_pretrained(mname, cache_dir="./local_cache")
-        self.pad_token_id = pad_token_id
 
-    def forward(self, text_id, candidate_id, require_gold=True):
-        
-        batch_size = text_id.size(0)
-        
-        input_mask = text_id != self.pad_token_id
-        cand_mask = candidate_id != self.pad_token_id
-        output = self.model(
-            input_ids=text_id, 
-            attention_mask=input_mask,
-            decoder_input_ids=candidate_id, 
-            decoder_attention_mask=cand_mask,
-            output_hidden_states=True
-            )
-        
-        output = output[0]  # [bz x cand_num, seq_len, word_dim]
-        output = output.view(batch_size, -1, output.size(1), output.size(2)) # [bz, cand_num, seq_len, word_dim]
-        candidate_id = candidate_id.unsqueeze(-1)
-        scores = torch.gather(output, 3, candidate_id).squeeze(-1)  # [bz, cand_num, seq_len]
-        cand_mask = cand_mask.float()
-        scores = torch.mul(scores, cand_mask).sum(-1) / cand_mask.sum(-1) # [bz, cand_num]
-        probs = output[:, 0]
-        if require_gold:
-            # get summary embedding
-            output = {'score': scores[:, 1:], "summary_score": scores[:, 0], "probs": probs}
-        else:
-            output = {'score': scores, "probs": probs}
-        return output
-
-
-class BartMixReRanker(nn.Module):
+class BRIO(nn.Module):
     
     def __init__(self, mname, pad_token_id, is_pegasus=False):
-        super(BartMixReRanker, self).__init__()
+        super(BRIO, self).__init__()
         if is_pegasus:
             self.model = PegasusScorer.from_pretrained(mname, cache_dir="./local_cache")
         else:
@@ -117,11 +79,16 @@ class BartMixReRanker(nn.Module):
         cand_mask = cand_mask.float()
         scores = torch.mul(scores, cand_mask).sum(-1) / ((cand_mask.sum(-1) + adding) ** length_penalty) # [bz, cand_num]
         if require_gold:
-            # get summary embedding
             output = {'score': scores[:, 1:], "summary_score": scores[:, 0], "probs": probs}
         else:
             output = {'score': scores, "probs": probs}
         return output
+
+    def scoring_mode(self):
+        self.model.model.scoring_mode()
+
+    def generation_mode(self):
+        self.model.model.generation_mode()
 
     def generate(
         self,

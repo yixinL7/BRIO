@@ -1,39 +1,9 @@
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 import os
 import json
-import numpy as np
 import torch
-from torch.nn.utils.rnn import pack_padded_sequence
-from torch.nn.utils.rnn import pad_packed_sequence
-import threading
-import concurrent.futures
-from multiprocessing import Pool, Queue, Process
-from functools import partial
-from nltk.tokenize import TreebankWordTokenizer
-import time
-from transformers import BertTokenizer, DistilBertTokenizer, RobertaTokenizer, BartTokenizer, BartConfig, BartModel, PegasusTokenizer
-import random
-import pickle
-import copy
+from transformers import BartTokenizer, PegasusTokenizer
 
-def compute_mask(lengths):
-    lengths = lengths.cpu()
-    max_len = int(torch.max(lengths).item())
-    range_row = torch.arange(0, max_len).long()[None, :].expand(lengths.size(0), max_len)
-    mask = lengths[:, None].expand_as(range_row).long()
-    mask = range_row < mask
-    mask = mask.float()
-    return mask
-
-def bert_pad(X, pad_token_id=0, max_len=-1):
-    if max_len < 0:
-        max_len = max(len(x) for x in X)
-    result = []
-    for x in X:
-        if len(x) < max_len:
-            x.extend([pad_token_id] * (max_len - len(x)))
-        result.append(x)
-    return torch.LongTensor(result)
 
 def to_cuda(batch, gpuid):
     for n in batch:
@@ -41,26 +11,32 @@ def to_cuda(batch, gpuid):
             batch[n] = batch[n].to(gpuid)
 
 
-class BartDataset(Dataset):
-    def __init__(self, fdir, model_type, maxlen=-1, is_test=False, total_len=512, is_sorted=True, maxnum=-1, is_untok=True, is_pegasus=False):
+class BrioDataset(Dataset):
+    def __init__(self, fdir, model_type, max_len=-1, is_test=False, total_len=512, is_sorted=True, max_num=-1, is_untok=True, is_pegasus=False, num=-1):
         """ data format: article, abstract, [(candidiate_i, score_i)] """
         self.isdir = os.path.isdir(fdir)
         if self.isdir:
             self.fdir = fdir
-            self.num = len(os.listdir(fdir))
+            if num > 0:
+                self.num = min(len(os.listdir(fdir)), num)
+            else:
+                self.num = len(os.listdir(fdir))
         else:
             with open(fdir) as f:
                 self.files = [x.strip() for x in f]
-            self.num = len(self.files)
+            if num > 0:
+                self.num = min(len(self.files), num)
+            else:
+                self.num = len(self.files)
         if is_pegasus:
             self.tok = PegasusTokenizer.from_pretrained(model_type, verbose=False)
         else:
             self.tok = BartTokenizer.from_pretrained(model_type, verbose=False)
-        self.maxlen = maxlen
+        self.maxlen = max_len
         self.is_test = is_test
         self.total_len = total_len
         self.sorted = is_sorted
-        self.maxnum = maxnum
+        self.maxnum = max_num
         self.is_untok = is_untok
         self.is_pegasus = is_pegasus
 
@@ -114,7 +90,7 @@ class BartDataset(Dataset):
         return result
 
 
-def collate_mp_bart(batch, pad_token_id, is_test=False):
+def collate_mp_brio(batch, pad_token_id, is_test=False):
     def pad(X, max_len=-1):
         if max_len < 0:
             max_len = max(x.size(0) for x in X)

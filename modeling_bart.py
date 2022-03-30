@@ -1806,7 +1806,7 @@ class CustomBartModel(BartPretrainedModel):
 
         self.encoder = BartEncoder(config, self.shared)
         self.decoder = BartDecoder(config, self.shared)
-        self.scoring_mode = True
+        self.is_scoring_mode = True
 
         self.init_weights()
 
@@ -1823,6 +1823,12 @@ class CustomBartModel(BartPretrainedModel):
 
     def get_decoder(self):
         return self.decoder
+
+    def scoring_mode(self):
+        self.is_scoring_mode = True
+
+    def generation_mode(self):
+        self.is_scoring_mode = False
 
     def forward(
         self,
@@ -1875,8 +1881,7 @@ class CustomBartModel(BartPretrainedModel):
                 attentions=encoder_outputs[2] if len(encoder_outputs) > 2 else None,
             )
 
-        if self.scoring_mode:
-            batch_size = input_ids.size(0)
+        if self.is_scoring_mode:
             cand_num = decoder_input_ids.size(1)
             encoder_hidden_states = encoder_outputs[0]
             encoder_hidden_states = torch.repeat_interleave(encoder_hidden_states, cand_num, dim=0)

@@ -19,7 +19,7 @@ class label_smoothing_loss(nn.Module):
         loss = loss.sum(2)
         # mask ignore_idx
         mask = (target != self.ignore_idx).type_as(input)
-        loss = (torch.mul(loss, mask).sum(1) / mask.sum(1)).mean()
+        loss = (torch.mul(loss, mask).sum() / mask.sum()).mean()
         return loss
 
 
