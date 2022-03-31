@@ -9,6 +9,12 @@
 - [Preprocessing](#preprocessing)
   - [Preprocessed Data](#preprocessed-data)
   - [Preprocess Your Own Data](#preprocess-your-own-data)
+- [How to Run](#how-to-run)
+  -  [Hyper-parameter Setting](#hyper-parameter-setting)
+  -  [Train](#train)
+  -  [Evaluate](#evaluate)
+- [Results, Outputs, Checkpoints](#results-outputs-checkpoints)
+- [Use BRIO with Huggingface](#use-brio-with-huggingface)
 
 ## Overview
 
@@ -93,7 +99,7 @@ We have provided the examples files in `./examples/raw_data`.
 
 The preprocessing precedure will store the processed data as seperate json files in `tgt_dir`.
 
-**Example: preprocessing test set on CNNDM**
+#### Example: preprocessing test set on CNNDM
 
 ```console
 # starting from the root directory
@@ -103,13 +109,13 @@ mkdir ./cnndm
 mkdir ./cnndm/diverse
 mkdir ./cnndm/diverse/test
 
-# suppose that the raw files at ./raw_data 
+# suppose that the raw files are at ./raw_data 
 
 python preprocess.py --src_dir ./raw_data --tgt_dir ./cnndm/diverse --split test --cand_num 16 --dataset cnndm -l
 ```
 
 
-## 3. How to Run
+## How to Run
 
 
 ### Hyper-parameter Setting
@@ -120,19 +126,19 @@ We also provide the specific settings on CNNDM (NYT share the same setting) and 
 ```console
 python main.py --cuda --gpuid [list of gpuid] --config [name of the config (cnndm/xsum)] -l 
 ```
-**Example: training on CNNDM**
+#### Example: training on CNNDM
 ```console
 python main.py --cuda --gpuid 0 1 2 3 --config cnndm -l 
 ```
 
-**Finetuning from an existing checkpoint**
+#### Finetuning from an existing checkpoint
 ```console
 python main.py --cuda --gpuid [list of gpuid] -l --config [name of the config (cnndm/xsum)] --model_pt [model path]
 ```
 model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
 
 ### Evaluate
-For ROUGE calculation, we use the standard ROUGE Perl package from [here](https://github.com/summanlp/evaluation/tree/master/ROUGE-RELEASE-1.5.5) in our paper. We lowercased and tokenized (PTB Tokenizer) texts before calculating the ROUGE scores. Please note that the scores calculated by this package would be sightly *different* from the ROUGE scores calculated/reported during training/intermidiate stage of evalution, because we use a pure python-based ROUGE implemenatation to calculate those scores for better efficiency. 
+For ROUGE calculation, we use the standard ROUGE Perl package from [here](https://github.com/summanlp/evaluation/tree/master/ROUGE-RELEASE-1.5.5) in our paper. We lowercased and tokenized (PTB Tokenizer) texts before calculating the ROUGE scores. Please note that the scores calculated by this package would be sightly *different* from the ROUGE scores calculated/reported during training/intermidiate stage of evalution, because we use a pure python-based ROUGE implementation to calculate those scores for better efficiency. 
 
 If you encounter problems when setting up the ROUGE Perl package (unfortunately it happens a lot :( ), you may consider using pure Python-based ROUGE package such as the one we used from the [compare-mt](https://github.com/neulab/compare-mt) package.
 
@@ -147,7 +153,7 @@ python main.py --cuda --gpuid [single gpu] --config [name of the config (cnndm/x
 ```
 model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
 
-**Example: evaluating the model as a generator on CNNDM**
+#### Example: evaluating the model as a generator on CNNDM
 ```console
 # write the system-generated files to a file: ./result/cnndm/test.out
 python main.py --cuda --gpuid 0 --config cnndm -e --model_pt cnndm/model_generation.bin -g
@@ -163,9 +169,9 @@ python cal_rouge.py --ref ./cnndm/test.target.tokenized --hyp ./result/cnndm/tes
 python cal_rouge.py --ref ./cnndm/test.target.tokenized --hyp ./result/cnndm/test.out.tokenized -l -p
 ```
 
-**Example: evaluating the model as a scorer on CNNDM**
+#### Example: evaluating the model as a scorer on CNNDM
 ```console
-# select the candidate summaries
+# rerank the candidate summaries
 python main.py --cuda --gpuid 0 --config cnndm -e --model_pt cnndm/model_ranking.bin -r
 
 # calculate the ROUGE scores using ROUGE Perl Package
@@ -179,7 +185,7 @@ python cal_rouge.py --ref ./result/cnndm/reference --hyp ./result/cnndm/candidat
 
 
 
-## 4. Results
+## Results, Outputs, Checkpoints
 
 The following are ROUGE scores calcualted by the standard ROUGE Perl package. 
 
@@ -203,11 +209,18 @@ The following are ROUGE scores calcualted by the standard ROUGE Perl package.
 
 Our model outputs on these datasets can be found in `./output`.
 
-We have also provided the finetuned checkpoints on [CNNDM](https://drive.google.com/drive/folders/1mdfYcHF9OfVb0eAggzaIfNk-63hnCeqh?usp=sharing), [XSum](https://drive.google.com/drive/folders/1EnHRuzH0rVIKLrseN8xqgvIgpakgrCxJ?usp=sharing) and [NYT](https://drive.google.com/drive/folders/1WriaJ2ozVlof0zNHjeqsDxcfpavL4ApB?usp=sharing).
+We have also provided the finetuned checkpoints on [CNNDM](https://drive.google.com/drive/folders/1mdfYcHF9OfVb0eAggzaIfNk-63hnCeqh?usp=sharing), [XSum](https://drive.google.com/drive/folders/1EnHRuzH0rVIKLrseN8xqgvIgpakgrCxJ?usp=sharing).
 
 You could load these checkpoints using the standard Transformers' interface (model.from_pretrained()).
 
-## 5. Use BRIO with Huggingface
+We summarize the outputs and model checkpoints below.
+|          | Checkpoint | Model Output | Reference Output |
+|----------|---------|---------|---------|
+| CNNDM    |    |  |   |
+| XSum     |  |  |   |
+
+
+## Use BRIO with Huggingface
 
 You can load our trained models from Huggingface Transformers.
 Our model checkpoint on CNNDM (`Yale-LILY/brio-cnndm-uncased`) is a standard BART model (i.e., `facebook/bart-large-cnn`) while our model checkpoint on XSum (`Yale-LILY/brio-xsum-cased`) is a standard Pegasus model (i.e., `google/pegasus-xsum`).
@@ -241,4 +254,8 @@ inputs = tokenizer([article], max_length=max_length, return_tensors="pt", trunca
 # Generate Summary
 summary_ids = model.generate(inputs["input_ids"])
 print(tokenizer.batch_decode(summary_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0])
+```
+*Notes*: our checkpoints on Huggingface *cannot* be directly loaded to the pytorch model (`BRIO`) in our code because our pytorch model is a wrapper on BART/PEGASUS for better training efficency. However, you can use it to initilize our pytorch model, e.g., 
+```python
+model = BRIO('Yale-LILY/brio-cnndm-uncased', tok.pad_token_id, is_pegasus=False)
 ```
