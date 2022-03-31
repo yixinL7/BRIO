@@ -88,6 +88,8 @@ python preprocess.py --src_dir [path of the raw data] --tgt_dir [output path] --
 
 Each line of these files should contain a sample except for `test.out` and `test.out.tokenized`. In particular, you should put the candidate summaries for one data sample at neighboring lines in `test.out` and `test.out.tokenized`.
 
+**Notes**: after the data preprocessing, you should also put the raw file `test.source`, `test.target` into the created data folder (e.g. `./cnndm/diverse/test.source`)
+
 We use the PTB tokenizer provided by Standford [CoreNLP](https://stanfordnlp.github.io/CoreNLP/index.html) ([download here](https://repo1.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/3.8.0/stanford-corenlp-3.8.0.jar)). Please note that tokenized texts are *only* used for evaluation.
 To tokenize a file, you may run (using test.source as an example)
 ```console
@@ -109,9 +111,11 @@ mkdir ./cnndm
 mkdir ./cnndm/diverse
 mkdir ./cnndm/diverse/test
 
-# suppose that the raw files are at ./raw_data 
+# suppose that the raw files are at ./raw_data, the results will be saved at ./cnndm/diverse/test
+# please rememeber to put the source file and the tarfet file on test set into the folder, e.g. ./cnndm/diverse/test.source
 
 python preprocess.py --src_dir ./raw_data --tgt_dir ./cnndm/diverse --split test --cand_num 16 --dataset cnndm -l
+
 ```
 
 
