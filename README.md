@@ -218,8 +218,8 @@ You could load these checkpoints using the standard Transformers' interface (mod
 We summarize the outputs and model checkpoints below.
 |          | Checkpoint | Model Output | Reference Output |
 |----------|---------|---------|---------|
-| CNNDM    |    | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
-| XSum     |  | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
+| CNNDM    | [model_generation.bin](https://drive.google.com/file/d/1CEBo6CCujl8QQwRKtYCMlS_s2_diBBS6/view?usp=sharing)   | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
+| XSum     | [model_generation.bin](https://drive.google.com/file/d/135V7ybBGvjOVdTPuYA1R65uNAN_UoeSL/view?usp=sharing) | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
 
 
 ## Use BRIO with Huggingface
