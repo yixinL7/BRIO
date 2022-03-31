@@ -1,5 +1,14 @@
-# Bringing Order to Abstractive Neural Summarization
+# BRIO: Bringing Order to Abstractive Summarization
 
+## Quick Links
+
+- [Overview](#overview)
+- [How to Install](#how-to-install)
+- [Description of Codes](#description-of-codes)
+  - [Workspace](#workspace)
+- [Preprocessing](#preprocessing)
+  - [Preprocessed Data](#preprocessed-data)
+  - [Preprocess Your Own Data](#preprocess-your-own-data)
 
 ## Overview
 
@@ -12,9 +21,8 @@ Instead of using MLE training alone, we introduce a contrastive learning compone
 
 
 
-## 1. How to Install
+## How to Install
 
-### Requirements
 - `python3.8`
 - `conda create --name env --file spec-file.txt`
 - Further steps
@@ -28,7 +36,7 @@ Instead of using MLE training alone, we introduce a contrastive learning compone
         ```
 Our code is based on Huggingface's [Transformers](https://github.com/huggingface/transformers) library. 
 
-### Description of Codes
+## Description of Codes
 - `main.py` -> training and evaluation procedure
 - `model.py` -> models
 - `modeling_bart.py`, `modeling_pegasus.py` -> modefied from Transformers library to support more efficient training
@@ -42,7 +50,7 @@ Following directories should be created for our experiments.
 - `./cache` -> storing model checkpoints
 - `./result` -> storing evaluation results
 
-## 2. Preprocessing
+## Preprocessing
 
 We use the following datasets for our experiments.
 
