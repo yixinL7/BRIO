@@ -66,7 +66,7 @@ We use the following datasets for our experiments.
 
 ### Preprocessed Data
 
-You can download the preprocessed data for our experiments on [CNNDM](https://drive.google.com/file/d/19TLcmoKnssPLQT4LJS_B7nm8KBT9WuyZ/view?usp=sharing).
+You can download the preprocessed data for our experiments on [CNNDM](https://drive.google.com/file/d/19TLcmoKnssPLQT4LJS_B7nm8KBT9WuyZ/view?usp=sharing) and [XSum](https://drive.google.com/file/d/1LDbcRFGiZrzIMCfnLZ6Xyeym1Kv3TdmD/view?usp=sharing).
 
 After donwloading, you should unzip the zip files in this root directory.
 
