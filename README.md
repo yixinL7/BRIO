@@ -126,6 +126,7 @@ We also provide the specific settings on CNNDM (NYT share the same setting) and 
 ```console
 python main.py --cuda --gpuid [list of gpuid] --config [name of the config (cnndm/xsum)] -l 
 ```
+The checkpoints and log will be saved in a subfolder of `./cache`.
 #### Example: training on CNNDM
 ```console
 python main.py --cuda --gpuid 0 1 2 3 --config cnndm -l 
@@ -152,6 +153,7 @@ To evaluate the model performance, please first use the following command to gen
 python main.py --cuda --gpuid [single gpu] --config [name of the config (cnndm/xsum)] -e --model_pt [model path] -g [evaluate the model as a generator] -r [evaluate the model as a scorer/reranker]
 ```
 model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
+The output will be saved in a subfolder of `./result` having the same name of the checkpoint folder.
 
 #### Example: evaluating the model as a generator on CNNDM
 ```console
@@ -216,8 +218,8 @@ You could load these checkpoints using the standard Transformers' interface (mod
 We summarize the outputs and model checkpoints below.
 |          | Checkpoint | Model Output | Reference Output |
 |----------|---------|---------|---------|
-| CNNDM    |    |  |   |
-| XSum     |  |  |   |
+| CNNDM    |    | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
+| XSum     |  | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
 
 
 ## Use BRIO with Huggingface
