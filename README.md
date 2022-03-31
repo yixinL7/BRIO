@@ -18,10 +18,7 @@ Instead of using MLE training alone, we introduce a contrastive learning compone
 - `python3.8`
 - `conda create --name env --file spec-file.txt`
 - Further steps
-    - `pip install transformers==4.6.1`
-    - `pip install pyrouge`
-    - `pip install tensorboard`
-    - `pip install sentencepiece`
+    - install additional libraries (after activating the conda env) `pip install -r requirements.txt`
     - `compare_mt` -> https://github.com/neulab/compare-mt
         ```console
         git clone https://github.com/neulab/compare-mt.git
@@ -160,6 +157,7 @@ python cal_rouge.py --ref ./cnndm/test.target.tokenized --hyp ./result/cnndm/tes
 
 **Example: evaluating the model as a scorer on CNNDM**
 ```console
+# select the candidate summaries
 python main.py --cuda --gpuid 0 --config cnndm -e --model_pt cnndm/model_ranking.bin -r
 
 # calculate the ROUGE scores using ROUGE Perl Package
@@ -204,7 +202,7 @@ You could load these checkpoints using the standard Transformers' interface (mod
 ## 5. Use BRIO with Huggingface
 
 You can load our trained models from Huggingface Transformers.
-Our model checkpoint on CNNDM ('Yale-LILY/brio-cnndm-uncased') is a standard BART model (i.e., 'facebook/bart-large-cnn') while our model checkpoint on XSum ('Yale-LILY/brio-xsum-cased') is a standard Pegasus model (i.e., 'google/pegasus-xsum').
+Our model checkpoint on CNNDM (`Yale-LILY/brio-cnndm-uncased`) is a standard BART model (i.e., `facebook/bart-large-cnn`) while our model checkpoint on XSum (`Yale-LILY/brio-xsum-cased`) is a standard Pegasus model (i.e., `google/pegasus-xsum`).
 
 ```python
 from transformers import BartTokenizer, PegasusTokenizer

@@ -3,3 +3,7 @@ cnndm
 checkpoints/
 requirements.txt.old
 __pycache__/
+envs/
+cache/
+result/
+compare-mt/
