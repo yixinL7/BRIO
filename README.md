@@ -77,7 +77,12 @@ python preprocess.py --src_dir [path of the raw data] --tgt_dir [output path] --
 
 Each line of these files should contain a sample except for `test.out` and `test.out.tokenized`. In particular, you should put the candidate summaries for one data sample at neighboring lines in `test.out` and `test.out.tokenized`.
 
-We use the PTB tokenizer provided by Standford [CoreNLP](https://stanfordnlp.github.io/CoreNLP/index.html) ([download here](https://repo1.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/3.8.0/stanford-corenlp-3.8.0.jar)). Please not that tokenized texts are *only* used for evaluation.
+We use the PTB tokenizer provided by Standford [CoreNLP](https://stanfordnlp.github.io/CoreNLP/index.html) ([download here](https://repo1.maven.org/maven2/edu/stanford/nlp/stanford-corenlp/3.8.0/stanford-corenlp-3.8.0.jar)). Please note that tokenized texts are *only* used for evaluation.
+To tokenize a file, you may run (using test.source as an example)
+```console
+export CLASSPATH=/your_path/stanford-corenlp-3.8.0.jar
+cat test.source | java edu.stanford.nlp.process.PTBTokenizer -ioFileList -preserveLines > test.source.tokenized
+```
 
 We have provided the examples files in `./examples/raw_data`.
 
@@ -107,41 +112,70 @@ You may specify the hyper-parameters in `main.py`.
 We also provide the specific settings on CNNDM (NYT share the same setting) and XSum in `config.py`.
 
 ### Train
-```
+```console
 python main.py --cuda --gpuid [list of gpuid] --config [name of the config (cnndm/xsum)] -l 
 ```
 **Example: training on CNNDM**
-```
+```console
 python main.py --cuda --gpuid 0 1 2 3 --config cnndm -l 
 ```
 
 **Finetuning from an existing checkpoint**
-```
+```console
 python main.py --cuda --gpuid [list of gpuid] -l --config [name of the config (cnndm/xsum)] --model_pt [model path]
 ```
 model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
 
 ### Evaluate
-For ROUGE calculation, we use the standard ROUGE Perl package from [here](https://github.com/summanlp/evaluation/tree/master/ROUGE-RELEASE-1.5.5). Note that the scores calculated by this package would be sightly *different* from the ROUGE scores calculated/reported during training/intermidiate stage of evalution, because we use a pure python-based ROUGE implemenatation to calculate those scores for better efficiency. 
+For ROUGE calculation, we use the standard ROUGE Perl package from [here](https://github.com/summanlp/evaluation/tree/master/ROUGE-RELEASE-1.5.5) in our paper. We lowercased and tokenized (PTB Tokenizer) texts before calculating the ROUGE scores. Please note that the scores calculated by this package would be sightly *different* from the ROUGE scores calculated/reported during training/intermidiate stage of evalution, because we use a pure python-based ROUGE implemenatation to calculate those scores for better efficiency. 
 
-We lowercased and tokenized (PTB Tokenizer) texts before calculating the ROUGE scores.
+If you encounter problems when setting up the ROUGE Perl package (unfortunately it happens a lot :( ), you may consider using pure Python-based ROUGE package such as the one we used from the [compare-mt](https://github.com/neulab/compare-mt) package.
 
+We provide the evaluation script in `cal_rouge.py`. If you are going to use Perl ROUGE package, please change line 13 into the path of the perl package.
+```python
+_ROUGE_PATH = '/YOUR-ABSOLUTE-PATH/ROUGE-RELEASE-1.5.5/'
 ```
+
+To evaluate the model performance, please first use the following command to generate the summaries.
+```console
 python main.py --cuda --gpuid [single gpu] --config [name of the config (cnndm/xsum)] -e --model_pt [model path] -g [evaluate the model as a generator] -r [evaluate the model as a scorer/reranker]
 ```
 model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
 
 **Example: evaluating the model as a generator on CNNDM**
-```
+```console
+# write the system-generated files to a file: ./result/cnndm/test.out
 python main.py --cuda --gpuid 0 --config cnndm -e --model_pt cnndm/model_generation.bin -g
+
+# tokenize the output file -> ./result/cnndm/test.out.tokenized (you may use other tokenizers)
+export CLASSPATH=/your_path/stanford-corenlp-3.8.0.jar
+cat ./result/cnndm/test.out | java edu.stanford.nlp.process.PTBTokenizer -ioFileList -preserveLines > ./result/cnndm/test.out.tokenized
+
+# calculate the ROUGE scores using ROUGE Perl Package
+python cal_rouge.py --ref ./cnndm/test.target.tokenized --hyp ./result/cnndm/test.out.tokenized -l
+
+# calculate the ROUGE scores using ROUGE Python Implementation
+python cal_rouge.py --ref ./cnndm/test.target.tokenized --hyp ./result/cnndm/test.out.tokenized -l -p
 ```
 
 **Example: evaluating the model as a scorer on CNNDM**
-```
+```console
 python main.py --cuda --gpuid 0 --config cnndm -e --model_pt cnndm/model_ranking.bin -r
+
+# calculate the ROUGE scores using ROUGE Perl Package
+# ./result/cnndm/reference and ./result/cnndm/candidate are two folders containing files. Each one of those files contain one summary
+python cal_rouge.py --ref ./result/cnndm/reference --hyp ./result/cnndm/candidate -l
+
+# calculate the ROUGE scores using ROUGE Python Implementation
+# ./result/cnndm/reference and ./result/cnndm/candidate are two folders containing files. Each one of those files contain one summary
+python cal_rouge.py --ref ./result/cnndm/reference --hyp ./result/cnndm/candidate -l -p
 ```
 
+
+
 ## 4. Results
+
+The following are ROUGE scores calcualted by the standard ROUGE Perl package. 
 
 ### CNNDM
 |          | ROUGE-1 | ROUGE-2 | ROUGE-L |
@@ -166,3 +200,39 @@ Our model outputs on these datasets can be found in `./output`.
 We have also provided the finetuned checkpoints on [CNNDM](https://drive.google.com/drive/folders/1mdfYcHF9OfVb0eAggzaIfNk-63hnCeqh?usp=sharing), [XSum](https://drive.google.com/drive/folders/1EnHRuzH0rVIKLrseN8xqgvIgpakgrCxJ?usp=sharing) and [NYT](https://drive.google.com/drive/folders/1WriaJ2ozVlof0zNHjeqsDxcfpavL4ApB?usp=sharing).
 
 You could load these checkpoints using the standard Transformers' interface (model.from_pretrained()).
+
+## 5. Use BRIO with Huggingface
+
+You can load our trained models from Huggingface Transformers.
+Our model checkpoint on CNNDM ('Yale-LILY/brio-cnndm-uncased') is a standard BART model (i.e., 'facebook/bart-large-cnn') while our model checkpoint on XSum ('Yale-LILY/brio-xsum-cased') is a standard Pegasus model (i.e., 'google/pegasus-xsum').
+
+```python
+from transformers import BartTokenizer, PegasusTokenizer
+from transformers import BartForConditionalGeneration, PegasusForConditionalGeneration
+
+IS_CNNDM = True # whether to use CNNDM dataset or XSum dataset
+ARTICLE_TO_SUMMARIZE = "Manchester United superstar Cristiano Ronaldo scored his 806th career goal in Old Trafford,\
+ breaking FIFA's all-time record for most goals in competitive matches in men's football history.\
+ It was the second of three goals the Portuguese attacker scored during the game,\
+ leading United to a 3-2 victory over Tottenham and finishing the day with 807 total career goals.\
+ The previous FIFA goal record was held by Josef Bican, with 805 goals."
+
+# Load our model checkpoints
+if IS_CNNDM:
+    model = BartForConditionalGeneration.from_pretrained('Yale-LILY/brio-cnndm-uncased')
+    tokenizer = BartTokenizer.from_pretrained('Yale-LILY/brio-cnndm-uncased')
+else:
+    model = PegasusForConditionalGeneration.from_pretrained('Yale-LILY/brio-xsum-cased')
+    tokenizer = PegasusTokenizer.from_pretrained('Yale-LILY/brio-xsum-cased')
+
+max_length = 1024 if IS_CNNDM else 512
+# generation example
+if IS_CNNDM:
+    article = ARTICLE_TO_SUMMARIZE.lower()
+else:
+    article = ARTICLE_TO_SUMMARIZE
+inputs = tokenizer([article], max_length=max_length, return_tensors="pt", truncation=True)
+# Generate Summary
+summary_ids = model.generate(inputs["input_ids"])
+print(tokenizer.batch_decode(summary_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0])
+```

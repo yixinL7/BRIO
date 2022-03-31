@@ -1,1 +1,5 @@
 local_cache/
+cnndm
+checkpoints/
+requirements.txt.old
+__pycache__/

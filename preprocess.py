@@ -95,11 +95,11 @@ def make_diverse_beam_data(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Preprocessing Parameter')
-    parser.add_argument("--cand_num", type=int, default=16)
-    parser.add_argument("--src_dir", type=str)
-    parser.add_argument("--tgt_dir", type=str)
-    parser.add_argument("--split", type=str)
-    parser.add_argument("--dataset", type=str, default="cnndm")
-    parser.add_argument("-l", "--lower", action="store_true")
+    parser.add_argument("--cand_num", type=int, default=16, help="Number of candidates")
+    parser.add_argument("--src_dir", type=str, help="Source directory")
+    parser.add_argument("--tgt_dir", type=str, help="Target directory")
+    parser.add_argument("--split", type=str, help="Dataset Split")
+    parser.add_argument("--dataset", type=str, default="cnndm", help="Dataset")
+    parser.add_argument("-l", "--lower", action="store_true", help="Lowercase")
     args = parser.parse_args()
     make_diverse_beam_data(args)

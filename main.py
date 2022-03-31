@@ -1,10 +1,7 @@
-from distutils.command.config import config
-from operator import mod
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import argparse
-import json
 import numpy as np
 import os
 import random
@@ -521,15 +518,15 @@ def main(args):
 
 if __name__ ==  "__main__":
     parser = argparse.ArgumentParser(description='Parameters')
-    parser.add_argument("--cuda", action="store_true")
-    parser.add_argument("--gpuid", nargs='+', type=int, default=0)
-    parser.add_argument("-e", "--evaluate", action="store_true")
-    parser.add_argument("-r", "--do_reranking", action="store_true")
-    parser.add_argument("-g", "--do_generation", action="store_true")
-    parser.add_argument("-l", "--log", action="store_true")
-    parser.add_argument("-p", "--port", type=int, default=12355)
-    parser.add_argument("--model_pt", default="", type=str)
-    parser.add_argument("--config", default="", type=str)
+    parser.add_argument("--cuda", action="store_true", help="use cuda")
+    parser.add_argument("--gpuid", nargs='+', type=int, default=0, help="gpu ids")
+    parser.add_argument("-e", "--evaluate", action="store_true", help="evaluate model")
+    parser.add_argument("-r", "--do_reranking", action="store_true", help="do reranking evaluation")
+    parser.add_argument("-g", "--do_generation", action="store_true", help="do generation evaluation")
+    parser.add_argument("-l", "--log", action="store_true", help="logging")
+    parser.add_argument("-p", "--port", type=int, default=12355, help="port")
+    parser.add_argument("--model_pt", default="", type=str, help="model path")
+    parser.add_argument("--config", default="", type=str, help="config path")
     args = parser.parse_args()
     if args.cuda is False:
         if args.evaluate:
