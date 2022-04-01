@@ -45,13 +45,16 @@ Instead of using MLE training alone, we introduce a contrastive learning compone
 Our code is based on Huggingface's [Transformers](https://github.com/huggingface/transformers) library. 
 
 ## Description of Codes
+- `cal_rouge.py` -> ROUGE calculation
+- `config.py` -> model configuration
+- `data_utils.py` -> dataloader
+- `label_smoothing_loss.py` -> label smoothing loss
 - `main.py` -> training and evaluation procedure
 - `model.py` -> models
 - `modeling_bart.py`, `modeling_pegasus.py` -> modefied from Transformers library to support more efficient training
-- `label_smoothing_loss.py` -> label smoothing loss
-- `data_utils.py` -> dataloader
-- `utils.py` -> utility functions
 - `preprocess.py` -> data preprocessing
+- `utils.py` -> utility functions
+
 
 ### Workspace
 Following directories should be created for our experiments.
