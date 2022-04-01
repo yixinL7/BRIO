@@ -1,5 +1,7 @@
 # BRIO: Bringing Order to Abstractive Summarization
 
+This repo contains the code, data and trained models for our paper [BRIO: Bringing Order to Abstractive Summarization](https://arxiv.org/abs/2203.16804).
+
 ## Quick Links
 
 - [Overview](#overview)
@@ -229,7 +231,7 @@ We summarize the outputs and model checkpoints below.
 ## Use BRIO with Huggingface
 
 You can load our trained models from Huggingface Transformers.
-Our model checkpoint on CNNDM (`Yale-LILY/brio-cnndm-uncased`) is a standard BART model (i.e., `facebook/bart-large-cnn`) while our model checkpoint on XSum (`Yale-LILY/brio-xsum-cased`) is a standard Pegasus model (i.e., `google/pegasus-xsum`).
+Our model checkpoint on CNNDM (`Yale-LILY/brio-cnndm-uncased`) is a standard BART model (i.e., [BartForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/bart#transformers.BartForConditionalGeneration)) while our model checkpoint on XSum (`Yale-LILY/brio-xsum-cased`) is a standard Pegasus model (i.e., [PegasusForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/pegasus#transformers.PegasusForConditionalGeneration)).
 
 ```python
 from transformers import BartTokenizer, PegasusTokenizer
