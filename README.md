@@ -104,7 +104,7 @@ cat test.source | java edu.stanford.nlp.process.PTBTokenizer -ioFileList -preser
 
 We have provided the examples files in `./examples/raw_data`.
 
-The preprocessing precedure will store the processed data as seperate json files in `tgt_dir`.
+The preprocessing procedure will store the processed data as seperate json files in `tgt_dir`.
 
 #### Example: preprocessing test set on CNNDM
 
@@ -117,7 +117,7 @@ mkdir ./cnndm/diverse
 mkdir ./cnndm/diverse/test
 
 # suppose that the raw files are at ./raw_data, the results will be saved at ./cnndm/diverse/test
-# please rememeber to put the source file and the tarfet file on test set into the folder, e.g. ./cnndm/diverse/test.source
+# please remember to put the source file and the target file on test set into the folder, e.g. ./cnndm/diverse/test.source
 
 python preprocess.py --src_dir ./raw_data --tgt_dir ./cnndm/diverse --split test --cand_num 16 --dataset cnndm -l
 
@@ -148,11 +148,11 @@ python main.py --cuda --gpuid [list of gpuid] -l --config [name of the config (c
 model path should be a subdirectory in the `./cache` directory, e.g. `cnndm/model.pt` (it shouldn't contain the prefix `./cache/`).
 
 ### Evaluate
-For ROUGE calculation, we use the standard ROUGE Perl package from [here](https://github.com/summanlp/evaluation/tree/master/ROUGE-RELEASE-1.5.5) in our paper. We lowercased and tokenized (PTB Tokenizer) texts before calculating the ROUGE scores. Please note that the scores calculated by this package would be sightly *different* from the ROUGE scores calculated/reported during training/intermidiate stage of evalution, because we use a pure python-based ROUGE implementation to calculate those scores for better efficiency. 
+For ROUGE calculation, we use the standard ROUGE Perl package from [here](https://github.com/summanlp/evaluation/tree/master/ROUGE-RELEASE-1.5.5) in our paper. We lowercased and tokenized (using PTB Tokenizer) texts before calculating the ROUGE scores. Please note that the scores calculated by this package would be sightly *different* from the ROUGE scores calculated/reported during training/intermidiate stage of evalution, because we use a pure python-based ROUGE implementation to calculate those scores for better efficiency. 
 
 If you encounter problems when setting up the ROUGE Perl package (unfortunately it happens a lot :( ), you may consider using pure Python-based ROUGE package such as the one we used from the [compare-mt](https://github.com/neulab/compare-mt) package.
 
-We provide the evaluation script in `cal_rouge.py`. If you are going to use Perl ROUGE package, please change line 13 into the path of the perl package.
+We provide the evaluation script in `cal_rouge.py`. If you are going to use Perl ROUGE package, please change line 13 into the path of your perl ROUGE package.
 ```python
 _ROUGE_PATH = '/YOUR-ABSOLUTE-PATH/ROUGE-RELEASE-1.5.5/'
 ```
@@ -223,11 +223,9 @@ The following are ROUGE scores calcualted by the standard ROUGE Perl package.
 
 Our model outputs on these datasets can be found in `./output`.
 
-We have also provided the finetuned checkpoints on [CNNDM](https://drive.google.com/drive/folders/1mdfYcHF9OfVb0eAggzaIfNk-63hnCeqh?usp=sharing), [XSum](https://drive.google.com/drive/folders/1EnHRuzH0rVIKLrseN8xqgvIgpakgrCxJ?usp=sharing).
-
-You could load these checkpoints using the standard Transformers' interface (model.from_pretrained()).
-
 We summarize the outputs and model checkpoints below.
+You could load these checkpoints using `model.load_state_dict(torch.load(path_to_checkpoint))`.
+
 |          | Checkpoints | Model Output | Reference Output |
 |----------|---------|---------|---------|
 | CNNDM    | [model_generation.bin](https://drive.google.com/file/d/1CEBo6CCujl8QQwRKtYCMlS_s2_diBBS6/view?usp=sharing) <br> [model_ranking.bin](https://drive.google.com/file/d/1vxPBuTUvxYqARl9C4wegVVS9g5-h7cwO/view?usp=sharing)   | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
@@ -236,7 +234,7 @@ We summarize the outputs and model checkpoints below.
 
 ## Use BRIO with Huggingface
 
-You can load our trained models from Huggingface Transformers.
+You can load our trained models for *generation* from Huggingface Transformers.
 Our model checkpoint on CNNDM (`Yale-LILY/brio-cnndm-uncased`) is a standard BART model (i.e., [BartForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/bart#transformers.BartForConditionalGeneration)) while our model checkpoint on XSum (`Yale-LILY/brio-xsum-cased`) is a standard Pegasus model (i.e., [PegasusForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/pegasus#transformers.PegasusForConditionalGeneration)).
 
 ```python

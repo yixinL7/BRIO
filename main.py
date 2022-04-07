@@ -137,7 +137,7 @@ def evaluation(args):
         bsz = 8
         model.generation_mode()
         total_num = len(os.listdir(f"./{args.dataset}/{args.datatype}/test"))
-        with open(f'./{args.dataset}/test.source') as source, open(os.path.join(root_dir, "test.out"), 'w') as fout:
+        with open(f'./{args.dataset}/{args.datatype}/test.source') as source, open(os.path.join(root_dir, "test.out"), 'w') as fout:
             sline = source.readline().strip()
             slines = [sline]
             for sline in tqdm(source, total=total_num):
