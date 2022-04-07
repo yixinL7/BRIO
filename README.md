@@ -203,20 +203,23 @@ The following are ROUGE scores calcualted by the standard ROUGE Perl package.
 ### CNNDM
 |          | ROUGE-1 | ROUGE-2 | ROUGE-L |
 |----------|---------|---------|---------|
-| BART     | 44.16   | 21.28   | 40.90   |
-| Ours     | 47.78   | 23.55   | 44.57   |
+| BART     | 44.29   | 21.17   | 41.09   |
+| BRIO-Ctr     | 47.28   | 22.93   | 44.15   |
+| BRIO-Mul     | 47.78   | 23.55   | 44.57   |
 
 ### XSum
 |          | ROUGE-1 | ROUGE-2 | ROUGE-L |
 |----------|---------|---------|---------|
-| Pegasus  | 47.21   | 24.56   | 39.25   |
-| Ours     | 49.07   | 25.59   | 40.40   |
+| Pegasus  | 47.46   | 24.69   | 39.53   |
+| BRIO-Ctr     | 48.13   | 25.13  | 39.84   |
+| BRIO-Mul    | 49.07   | 25.59   | 40.40   |
 
 ### NYT
 |          | ROUGE-1 | ROUGE-2 | ROUGE-L |
 |----------|---------|---------|---------|
 | BART     | 55.78   | 36.61   | 52.60   |
-| Ours     | 57.75   | 38.64   | 54.54   |
+| BRIO-Ctr     | 55.98   | 36.54  | 52.51   |
+| BRIO-Mul    | 57.75  | 38.64   | 54.54   |
 
 Our model outputs on these datasets can be found in `./output`.
 
@@ -225,10 +228,10 @@ We have also provided the finetuned checkpoints on [CNNDM](https://drive.google.
 You could load these checkpoints using the standard Transformers' interface (model.from_pretrained()).
 
 We summarize the outputs and model checkpoints below.
-|          | Checkpoint | Model Output | Reference Output |
+|          | Checkpoints | Model Output | Reference Output |
 |----------|---------|---------|---------|
-| CNNDM    | [model_generation.bin](https://drive.google.com/file/d/1CEBo6CCujl8QQwRKtYCMlS_s2_diBBS6/view?usp=sharing)   | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
-| XSum     | [model_generation.bin](https://drive.google.com/file/d/135V7ybBGvjOVdTPuYA1R65uNAN_UoeSL/view?usp=sharing) | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
+| CNNDM    | [model_generation.bin](https://drive.google.com/file/d/1CEBo6CCujl8QQwRKtYCMlS_s2_diBBS6/view?usp=sharing) <br> [model_ranking.bin](https://drive.google.com/file/d/1vxPBuTUvxYqARl9C4wegVVS9g5-h7cwO/view?usp=sharing)   | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
+| XSum     | [model_generation.bin](https://drive.google.com/file/d/135V7ybBGvjOVdTPuYA1R65uNAN_UoeSL/view?usp=sharing) <br> [model_ranking.bin](https://drive.google.com/file/d/1oWLexfjBifpCwV0gaPp0XZyxe_vMpAK_/view?usp=sharing) | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
 
 
 ## Use BRIO with Huggingface
