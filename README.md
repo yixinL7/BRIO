@@ -10,6 +10,7 @@ This repo contains the code, data and trained models for our paper [BRIO: Bringi
   - [Workspace](#workspace)
 - [Preprocessing](#preprocessing)
   - [Preprocessed Data](#preprocessed-data)
+  - [Generate Candidate Summaries](#generate-candidate-summaries)
   - [Preprocess Your Own Data](#preprocess-your-own-data)
 - [How to Run](#how-to-run)
   -  [Hyper-parameter Setting](#hyper-parameter-setting)
@@ -54,6 +55,7 @@ Our code is based on Huggingface's [Transformers](https://github.com/huggingface
 - `modeling_bart.py`, `modeling_pegasus.py` -> modefied from Transformers library to support more efficient training
 - `preprocess.py` -> data preprocessing
 - `utils.py` -> utility functions
+- `gen_candidate.py` -> generate candidate summaries
 
 
 ### Workspace
@@ -71,11 +73,18 @@ We use the following datasets for our experiments.
 
 ### Preprocessed Data
 
-You can download the preprocessed data for our experiments on [CNNDM](https://drive.google.com/file/d/1eSNa9yokOYp7GLyCuS-DYLWTMWJFZ_qh/view?usp=sharing) and [XSum](https://drive.google.com/file/d/1LDbcRFGiZrzIMCfnLZ6Xyeym1Kv3TdmD/view?usp=sharing).
+You can download the preprocessed data for our experiments on [CNNDM](https://drive.google.com/file/d/1eSNa9yokOYp7GLyCuS-DYLWTMWJFZ_qh/view?usp=sharing), [CNNDM (cased)](https://drive.google.com/file/d/1e6QxfyS_CNSl48t4Lgbr-IMHs3mBWH5o/view?usp=sharing)] and [XSum](https://drive.google.com/file/d/1LDbcRFGiZrzIMCfnLZ6Xyeym1Kv3TdmD/view?usp=sharing).
 
 After donwloading, you should unzip the zip files in this root directory.
 
 For NYT, you will need to get the license and please follow https://github.com/kedz/summarization-datasets for pre-processing.
+
+### Generate Candidate Summaries
+
+To generate the candidate summaries from a pre-trained model, please run
+```console
+python gen_candidate.py --gpuid [gpuid] --src_dir [path of the input file (e.g. test.source)] --tgt_dir [path of the output file] --dataset [cnndm/xsum] 
+```
 
 ### Preprocess Your Own Data
 
@@ -206,6 +215,7 @@ The following are ROUGE scores calcualted by the standard ROUGE Perl package.
 | BART     | 44.29   | 21.17   | 41.09   |
 | BRIO-Ctr     | 47.28   | 22.93   | 44.15   |
 | BRIO-Mul     | 47.78   | 23.55   | 44.57   |
+| BRIO-Mul (Cased)  | 48.01   | 23.76   | 44.63   |
 
 ### XSum
 |          | ROUGE-1 | ROUGE-2 | ROUGE-L |
@@ -229,19 +239,21 @@ You could load these checkpoints using `model.load_state_dict(torch.load(path_to
 |          | Checkpoints | Model Output | Reference Output |
 |----------|---------|---------|---------|
 | CNNDM    | [model_generation.bin](https://drive.google.com/file/d/1CEBo6CCujl8QQwRKtYCMlS_s2_diBBS6/view?usp=sharing) <br> [model_ranking.bin](https://drive.google.com/file/d/1vxPBuTUvxYqARl9C4wegVVS9g5-h7cwO/view?usp=sharing)   | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
+| CNNDM (Cased)   | [model_generation.bin](https://drive.google.com/file/d/1YDUzNqbT6CC7VG3WfRspe2rM-j5DsjzT/view?usp=sharing)  | [cnndm.test.ours.cased.out](output/cnndm.test.ours.cased.out) | [cnndm.test.cased.reference](output/cnndm.test.cased.reference)  |
 | XSum     | [model_generation.bin](https://drive.google.com/file/d/135V7ybBGvjOVdTPuYA1R65uNAN_UoeSL/view?usp=sharing) <br> [model_ranking.bin](https://drive.google.com/file/d/1GX6EQcI222NXvvQ8Z0gKQPmc64podbeC/view?usp=sharing) | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
 
 
 ## Use BRIO with Huggingface
 
 You can load our trained models for *generation* from Huggingface Transformers.
-Our model checkpoint on CNNDM (`Yale-LILY/brio-cnndm-uncased`) is a standard BART model (i.e., [BartForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/bart#transformers.BartForConditionalGeneration)) while our model checkpoint on XSum (`Yale-LILY/brio-xsum-cased`) is a standard Pegasus model (i.e., [PegasusForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/pegasus#transformers.PegasusForConditionalGeneration)).
+Our model checkpoint on CNNDM (`Yale-LILY/brio-cnndm-uncased`, `Yale-LILY/brio-cnndm-cased`) is a standard BART model (i.e., [BartForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/bart#transformers.BartForConditionalGeneration)) while our model checkpoint on XSum (`Yale-LILY/brio-xsum-cased`) is a standard Pegasus model (i.e., [PegasusForConditionalGeneration](https://huggingface.co/docs/transformers/model_doc/pegasus#transformers.PegasusForConditionalGeneration)).
 
 ```python
 from transformers import BartTokenizer, PegasusTokenizer
 from transformers import BartForConditionalGeneration, PegasusForConditionalGeneration
 
 IS_CNNDM = True # whether to use CNNDM dataset or XSum dataset
+LOWER = False
 ARTICLE_TO_SUMMARIZE = "Manchester United superstar Cristiano Ronaldo scored his 806th career goal in Old Trafford,\
  breaking FIFA's all-time record for most goals in competitive matches in men's football history.\
  It was the second of three goals the Portuguese attacker scored during the game,\
@@ -258,7 +270,7 @@ else:
 
 max_length = 1024 if IS_CNNDM else 512
 # generation example
-if IS_CNNDM:
+if LOWER:
     article = ARTICLE_TO_SUMMARIZE.lower()
 else:
     article = ARTICLE_TO_SUMMARIZE

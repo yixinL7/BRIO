@@ -28,8 +28,8 @@ logging.getLogger("transformers.tokenization_utils_fast").setLevel(logging.ERROR
 def base_setting(args):
     args.batch_size = getattr(args, 'batch_size', 1) # batch size on one gpu, one step
     args.epoch = getattr(args, 'epoch', 100) 
-    args.report_freq = getattr(args, "report_freq", 10) # report frequency
-    args.accumulate_step = getattr(args, "accumulate_step", 1) # accumulate gradients steps
+    args.report_freq = getattr(args, "report_freq", 100) # report frequency
+    args.accumulate_step = getattr(args, "accumulate_step", 32) # accumulate gradients steps
     args.margin = getattr(args, "margin", 0.001) # margin for ranking loss on candidate summaries
     args.gold_margin = getattr(args, "gold_margin", 0) # margin for ranking loss on gold summaries
     args.gold_weight = getattr(args, "gold_weight", 0) # weight for ranking loss on gold summaries
@@ -46,7 +46,7 @@ def base_setting(args):
     args.scale = getattr(args, "scale", 1) # scale of ranking loss
     args.score_mode = getattr(args, "score_mode", "log") # use log-likelihood for ranking loss
     args.datatype = getattr(args, "datatype", "diverse") # data type
-    args.dataset = getattr(args, "dataset", "CNNDM") # dataset
+    args.dataset = getattr(args, "dataset", "cnndm") # dataset
     args.max_len = getattr(args, "max_len", 120) # max length of summary
     args.max_num = getattr(args, "max_num", 16) # max number of candidate summaries
     args.smooth = getattr(args, "smooth", 0.1) # label smoothing
@@ -57,12 +57,17 @@ def base_setting(args):
     args.gen_min_len = getattr(args, "gen_min_len", 55) # min length of generated summaries
     args.is_pegasus = getattr(args, "is_pegasus", False) # whether to use Pegasus as the baseline model
     args.adding = getattr(args, "adding", 0) # used for numerical stability
-    args.eval_interval = getattr(args, "eval_interval", 10) # evaluation intervals
+    args.eval_interval = getattr(args, "eval_interval", 1000) # evaluation intervals
     args.num_beams = getattr(args, "num_beams", 4) # number of beams for beam search
 
 def evaluation(args):
     # load data
-    base_setting(args)
+    if args.config == "cnndm":
+        cnndm_setting(args)
+    elif args.config == "xsum":
+        xsum_setting(args)
+    else:
+        base_setting(args)
     if args.is_pegasus:
         tok = PegasusTokenizer.from_pretrained(args.model_type)
     else:
@@ -361,11 +366,11 @@ def run(rank, args):
         dataloader = DataLoader(train_set, batch_size=args.batch_size, shuffle=False, num_workers=4, collate_fn=collate_fn, sampler=train_sampler)
         val_sampler = torch.utils.data.distributed.DistributedSampler(
     	 val_set, num_replicas=world_size, rank=rank)
-        val_dataloader = DataLoader(val_set, batch_size=2, shuffle=False, num_workers=4, collate_fn=collate_fn_val, sampler=val_sampler)
+        val_dataloader = DataLoader(val_set, batch_size=1, shuffle=False, num_workers=4, collate_fn=collate_fn_val, sampler=val_sampler)
         val_gen_dataloader = DataLoader(val_set, batch_size=8, shuffle=False, num_workers=4, collate_fn=collate_fn_val, sampler=val_sampler)
     else:
         dataloader = DataLoader(train_set, batch_size=args.batch_size, shuffle=True, num_workers=4, collate_fn=collate_fn)
-        val_dataloader = DataLoader(val_set, batch_size=2, shuffle=False, num_workers=4, collate_fn=collate_fn_val)
+        val_dataloader = DataLoader(val_set, batch_size=1, shuffle=False, num_workers=4, collate_fn=collate_fn_val)
         val_gen_dataloader = DataLoader(val_set, batch_size=8, shuffle=False, num_workers=4, collate_fn=collate_fn_val)
     # build models
     model_path = args.pretrained if args.pretrained is not None else args.model_type
