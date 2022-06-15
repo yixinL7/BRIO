@@ -284,7 +284,7 @@ def test(dataloader, gen_dataloader, model, args, tok, gpuid, do_sample=False):
                     to_cuda(batch, device)
                 samples = batch["data"]
                 slines = [" ".join(x["article_untok"]) for x in samples]
-                dct = tok.batch_encode_plus(slines, max_length=1024, return_tensors="pt", pad_to_max_length=True, truncation=True)
+                dct = tok.batch_encode_plus(slines, max_length=args.total_len, return_tensors="pt", pad_to_max_length=True, truncation=True)
                 summaries = _model.generate(
                     input_ids=dct["input_ids"].to(device),
                     attention_mask=dct["attention_mask"].to(device),
