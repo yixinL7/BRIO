@@ -279,7 +279,7 @@ inputs = tokenizer([article], max_length=max_length, return_tensors="pt", trunca
 summary_ids = model.generate(inputs["input_ids"])
 print(tokenizer.batch_decode(summary_ids, skip_special_tokens=True, clean_up_tokenization_spaces=False)[0])
 ```
-*Notes*: our checkpoints on Huggingface *cannot* be directly loaded to the pytorch model (`BRIO`) in our code because our pytorch model is a wrapper on BART/PEGASUS for better training efficency. However, you can use it to initilize our pytorch model, e.g., 
+*Notes*: our checkpoints on Huggingface *cannot* be directly loaded to the pytorch model (`BRIO`) in our code because our pytorch model is a wrapper on BART/PEGASUS for better training efficiency. However, you can use it to initilize our pytorch model, e.g., 
 ```python
 model = BRIO('Yale-LILY/brio-cnndm-uncased', tok.pad_token_id, is_pegasus=False)
 ```
