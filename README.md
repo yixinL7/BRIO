@@ -52,7 +52,7 @@ Our code is based on Huggingface's [Transformers](https://github.com/huggingface
 - `label_smoothing_loss.py` -> label smoothing loss
 - `main.py` -> training and evaluation procedure
 - `model.py` -> models
-- `modeling_bart.py`, `modeling_pegasus.py` -> modefied from Transformers library to support more efficient training
+- `modeling_bart.py`, `modeling_pegasus.py` -> modified from Transformers library to support more efficient training
 - `preprocess.py` -> data preprocessing
 - `utils.py` -> utility functions
 - `gen_candidate.py` -> generate candidate summaries
