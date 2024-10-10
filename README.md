@@ -73,7 +73,7 @@ We use the following datasets for our experiments.
 
 ### Preprocessed Data
 
-You can download the preprocessed data for our experiments on [CNNDM](https://drive.google.com/file/d/10MyeEZVSgh38ot3O9mEhPWPqxLSJMoxA/view?usp=sharing), [CNNDM (cased)](https://drive.google.com/file/d/1NP0g9EG946Rp82e3zJyohCdey8NX-E7H/view?usp=sharing) and [XSum](https://drive.google.com/file/d/1LDbcRFGiZrzIMCfnLZ6Xyeym1Kv3TdmD/view?usp=sharing).
+You can download the preprocessed data for our experiments on [CNNDM](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EZAVS548ctlIt1dpVs0No6UBkGqMbS8CuMrWQ3ZcsPoyOA?e=deC4kz), [CNNDM (cased)](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EXoAthMu8M1NrA-Fovl2pcwB2MsU7CQ-lFrLjQZdOBMHBw?e=Rli1fM) and [XSum](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/Ef8xTVrvyptFkHwuODEmmCIB1Qd63RQeDhV2zzlq0IBOxg?e=PpEle7).
 
 After donwloading, you should unzip the zip files in this root directory.
 
@@ -238,9 +238,9 @@ You could load these checkpoints using `model.load_state_dict(torch.load(path_to
 
 |          | Checkpoints | Model Output | Reference Output |
 |----------|---------|---------|---------|
-| CNNDM    | [model_generation.bin](https://drive.google.com/file/d/1CEBo6CCujl8QQwRKtYCMlS_s2_diBBS6/view?usp=sharing) <br> [model_ranking.bin](https://drive.google.com/file/d/1vxPBuTUvxYqARl9C4wegVVS9g5-h7cwO/view?usp=sharing)   | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
-| CNNDM (Cased)   | [model_generation.bin](https://drive.google.com/file/d/1YDUzNqbT6CC7VG3WfRspe2rM-j5DsjzT/view?usp=sharing)  | [cnndm.test.ours.cased.out](output/cnndm.test.ours.cased.out) | [cnndm.test.cased.reference](output/cnndm.test.cased.reference)  |
-| XSum     | [model_generation.bin](https://drive.google.com/file/d/135V7ybBGvjOVdTPuYA1R65uNAN_UoeSL/view?usp=sharing) <br> [model_ranking.bin](https://drive.google.com/file/d/1GX6EQcI222NXvvQ8Z0gKQPmc64podbeC/view?usp=sharing) | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
+| CNNDM    | [model_generation.bin](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EWu_h8oUFKdKgv2r9GkTTlEBXRioWkd3Y51_HHN2zj9uUg?e=EFAnME) <br> [model_ranking.bin](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EVLl9BXC8uhMttARDYehvbMBdG2u40wKR3ZeXuyIb4lVUQ?e=rVbYNs)   | [cnndm.test.ours.out](output/cnndm.test.ours.out) | [cnndm.test.reference](output/cnndm.test.reference)  |
+| CNNDM (Cased)   | [model_generation.bin](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EXyhVO_DG95Mle2g5C35DD4ByFtqdTq5cwDMJK2NthjRNg?e=xsdEGM)  | [cnndm.test.ours.cased.out](output/cnndm.test.ours.cased.out) | [cnndm.test.cased.reference](output/cnndm.test.cased.reference)  |
+| XSum     | [model_generation.bin](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EVyFtk9vBahAhnZH0U7d0FsBMC0vEcRigUxYTwvYovDS-w?e=hm61xn) <br> [model_ranking.bin](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/ERopm6VcP4xOmuqEnuJCs-IByd_pK0M6Mh4nqqeqYFHXbA?e=Xj8Or7) | [xsum.test.ours.out](output/xsum.test.ours.out) | [xsum.test.reference](output/xsum.test.reference)  |
 
 
 ## Use BRIO with Huggingface
