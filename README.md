@@ -75,7 +75,7 @@ We use the following datasets for our experiments.
 
 You can download the preprocessed data for our experiments on [CNNDM](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EZAVS548ctlIt1dpVs0No6UBkGqMbS8CuMrWQ3ZcsPoyOA?e=deC4kz), [CNNDM (cased)](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/EXoAthMu8M1NrA-Fovl2pcwB2MsU7CQ-lFrLjQZdOBMHBw?e=Rli1fM) and [XSum](https://yaleedu-my.sharepoint.com/:u:/g/personal/yixin_liu_yale_edu/Ef8xTVrvyptFkHwuODEmmCIB1Qd63RQeDhV2zzlq0IBOxg?e=PpEle7).
 
-After donwloading, you should unzip the zip files in this root directory.
+After downloading, you should unzip the zip files in this root directory.
 
 For NYT, you will need to get the license and please follow https://github.com/kedz/summarization-datasets for pre-processing.
 
